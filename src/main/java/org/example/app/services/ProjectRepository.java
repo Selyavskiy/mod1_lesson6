@@ -9,4 +9,7 @@ public interface ProjectRepository<T> {
 
     boolean removeItemById(Integer bookIdToRemove);
 
+    boolean addFileListItem(String fileLink);
+
+    List<String> getFileList();
 }

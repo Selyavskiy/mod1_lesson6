@@ -3,10 +3,11 @@ package org.example.web.dto;
 import javax.validation.constraints.Digits;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Null;
 
-public class Book {
-    @Null
+public class BookToFilter {
+
+
+    @NotNull
     private Integer id;
     @NotBlank
     private String author;
@@ -15,6 +16,17 @@ public class Book {
     @NotNull
     @Digits(integer = 5, fraction = 0)
     private Integer size;
+
+
+    @Override
+    public String toString() {
+        return "BookToRemove{" +
+                "id='" + id + '\'' +
+                ", author='" + author + '\'' +
+                ", title='" + title + '\'' +
+                ", size=" + size +
+                '}';
+    }
 
     public Integer getId() {
         return id;
@@ -48,13 +60,4 @@ public class Book {
         this.size = size;
     }
 
-    @Override
-    public String toString() {
-        return "Book{" +
-                "id=" + id +
-                ", author='" + author + '\'' +
-                ", title='" + title + '\'' +
-                ", size=" + size +
-                '}';
-    }
 }

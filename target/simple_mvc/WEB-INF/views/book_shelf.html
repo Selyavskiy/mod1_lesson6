@@ -47,46 +47,85 @@
                     <input type="submit" value="save">
                 </td>
             </tr>
-        </table>
-    </form>
-
-    <form method="post" th:action="@{/books/remove}">
-        <table>
-            <tr>
+            <tr th:if="${#fields.hasErrors()}">
                 <td>
-                    <input type="text" placeholder="id number" pattern="^[ 0-9]+$" th:name="bookIdToRemove">
-                </td>
-                <td>
-                    <input type="text" placeholder="author" th:name="bookAuthorToRemove">
-                </td>
-                <td>
-                    <input type="text" placeholder="book_title" th:name="bookTitleToRemove">
-                </td>
-                <td>
-                    <input type="text" placeholder="size (pages)" th:name="bookSizeToRemove">
-                </td>
-                <td>
-                    <input type="submit" value="remove">
+                    <p>some fields has wrong data</p>
                 </td>
             </tr>
         </table>
     </form>
 
-
-    <form method="get" th:action="@{/books/filter}">
+    <form method="post" th:action="@{/books/uploadFile}" enctype="multipart/form-data">
         <table>
             <tr>
                 <td>
-                    <input type="text" placeholder="author" th:name="bookAuthorToFilter">
+                    <input type="file" name="file"/>
                 </td>
                 <td>
-                    <input type="text" placeholder="book_title" th:name="bookTitleToFilter">
+                    <input type="submit" value="Upload">
+                </td>
+            </tr>
+        </table>
+    </form>
+
+    <form method="get" th:action="@{/books/files}" th:object="${fileList}">
+        <table>
+            <tr th:each="file : ${fileList}">
+                <td>
+                    <a th:href="${file}" th:text="${file}"></a>
+                </td>
+            </tr>
+        </table>
+    </form>
+
+    <form method="post" th:action="@{/books/remove}" th:object="${bookToRemove}">
+        <table>
+            <tr>
+                <td>
+                    <input type="text" placeholder="id number" th:field="*{id}">
                 </td>
                 <td>
-                    <input type="text" placeholder="size (pages)" th:name="bookSizeToFilter">
+                    <input type="text" placeholder="author" th:field="*{author}">
+                </td>
+                <td>
+                    <input type="text" placeholder="book_title" th:field="*{title}">
+                </td>
+                <td>
+                    <input type="text" placeholder="size (pages)" th:field="*{size}">
+                </td>
+                <td>
+                    <input type="submit" value="remove">
+                </td>
+            </tr>
+            <tr th:if="${#fields.allErrors().size()}==4">
+                <td>
+                    <p>wrong data in fields</p>
+                </td>
+            </tr>
+
+        </table>
+    </form>
+
+
+    <form method="get" th:action="@{/books/filter}" th:object="${bookToFilter}">
+        <table>
+            <tr>
+                <td>
+                    <input type="text" placeholder="author" th:field="*{author}">
+                </td>
+                <td>
+                    <input type="text" placeholder="book_title" th:field="*{title}">
+                </td>
+                <td>
+                    <input type="text" placeholder="size (pages)" th:field="*{size}">
                 </td>
                 <td>
                     <input type="submit" value="filter">
+                </td>
+            </tr>
+            <tr th:if="${#fields.allErrors().size()}==4">
+                <td>
+                    <p>wrong data in fields</p>
                 </td>
             </tr>
         </table>

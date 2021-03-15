@@ -2,9 +2,12 @@ package org.example.app.services;
 
 import org.apache.log4j.Logger;
 import org.example.web.dto.Book;
+import org.example.web.dto.BookToRemove;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.PatternSyntaxException;
@@ -61,17 +64,25 @@ public class BookService {
     }
 
 
-    public boolean removeBookByFields(Integer bookIdToRemove, String bookAuthorToRemove, String bookTitleToRemove, String bookSizeToRemove) {
+    public boolean removeBookByFields(BookToRemove bookToRemove) {
+
+        String bookIdToRemove = String.valueOf(bookToRemove.getId());
+        String bookAuthorToRemove = bookToRemove.getAuthor();
+        String bookTitleToRemove = bookToRemove.getTitle();
+        String bookSizeToRemove = String.valueOf(bookToRemove.getSize());
+
+        logger.info(String.valueOf(bookToRemove.getId())=="");
+        logger.info("try delete book" + bookIdToRemove + bookAuthorToRemove + bookTitleToRemove + bookSizeToRemove);
 
         boolean result = false;
 
-        if (bookIdToRemove == null &&
+        if (bookIdToRemove.isEmpty() &&
                 bookAuthorToRemove.isEmpty() &&
                 bookTitleToRemove.isEmpty() &&
-                bookSizeToRemove == null)
+                bookSizeToRemove.equals("null"))
         {
             logger.info("all field is empty");
-            result = false;
+            return false;
         }
 
         boolean checkId;
@@ -82,7 +93,7 @@ public class BookService {
         for (Book tmpBook :
                 bookRepo.retreiveAll()) {
 
-            checkId = checkParamInteger(tmpBook.getId(), bookIdToRemove);
+            checkId = checkParamString(String.valueOf(tmpBook.getId()), bookIdToRemove, false);
             checkAuthor = checkParamString(tmpBook.getAuthor(), bookAuthorToRemove, false);
             checkTitle = checkParamString(tmpBook.getTitle(), bookTitleToRemove, false);
             checkSize = checkParamString(tmpBook.getSize().toString(), bookSizeToRemove, false);
@@ -97,27 +108,21 @@ public class BookService {
     }
 
 
-
-
-
-
-    public boolean checkParamInteger (Integer bookParam, Integer frontParam){
-        boolean result = false;
-        if (bookParam == null) {
-            result = true;
-        }
-        else {
-            if (bookParam.equals(frontParam) || frontParam == null) {
-                result = true;
-            } else if (bookParam.toString().matches(frontParam.toString())){
-                result = true;
-            }
-        }
-        return result;
+    public List<String> getFileList(){
+        return bookRepo.getFileList();
     }
+
+    public boolean addFileListItem(String fileLink){
+        bookRepo.addFileListItem(fileLink);
+        return true;
+    }
+
+
+
+
     public boolean checkParamString (String bookParam, String frontParam, boolean isFilter){
         boolean result = false;
-        if (bookParam == null || frontParam == null || frontParam.equals("")) {
+        if (bookParam == null || frontParam == null || frontParam.equals("") || frontParam.equals("null") ) {
             result = true;
         }
         else {
@@ -151,6 +156,21 @@ public class BookService {
             }
         }
         return result;
+    }
+
+
+
+
+
+
+    @PostConstruct
+    public void postConstructIdProvider(){
+        logger.info("postConstruct annotated method BookService");
+    }
+
+    @PreDestroy
+    public void preDestroyIdProvider(){
+        logger.info("preDestroyConstruct annotated method BookService");
     }
 
 
