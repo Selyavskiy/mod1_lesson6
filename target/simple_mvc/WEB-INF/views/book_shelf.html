@@ -49,7 +49,7 @@
             </tr>
             <tr th:if="${#fields.hasErrors()}">
                 <td>
-                    <p>some fields has wrong data</p>
+                    <p><font color="#8b0000">some fields has wrong data</font></p>
                 </td>
             </tr>
         </table>
@@ -68,15 +68,19 @@
         </table>
     </form>
 
-    <form method="get" th:action="@{/books/files}" th:object="${fileList}">
-        <table>
+    <table>
             <tr th:each="file : ${fileList}">
+
                 <td>
-                    <a th:href="${file}" th:text="${file}"></a>
+                    <form th:method="get" th:action="@{/books/downloadFile}" enctype="multipart/form-data">
+                        <a th:href="'/simple_mvc_war_exploded/books/downloadFile?fileName=' + ${file}" th:text="'Download file: ' + ${file}">download</a>
+                    </form>
                 </td>
+
+
             </tr>
-        </table>
-    </form>
+    </table>
+
 
     <form method="post" th:action="@{/books/remove}" th:object="${bookToRemove}">
         <table>
@@ -99,7 +103,7 @@
             </tr>
             <tr th:if="${#fields.allErrors().size()}==4">
                 <td>
-                    <p>wrong data in fields</p>
+                    <p><font color="#8b0000">wrong data in fields</font></p>
                 </td>
             </tr>
 
@@ -125,7 +129,7 @@
             </tr>
             <tr th:if="${#fields.allErrors().size()}==4">
                 <td>
-                    <p>wrong data in fields</p>
+                    <p><font color="#8b0000">wrong data in fields</font></p>
                 </td>
             </tr>
         </table>

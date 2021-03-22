@@ -16,11 +16,10 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
+import java.io.*;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 
 @Controller
@@ -129,7 +128,7 @@ public class BookShelfController {
             BufferedOutputStream stream = new BufferedOutputStream(new FileOutputStream(serverFile));
             stream.write(bytes);
             stream.close();
-            bookService.addFileListItem(serverFile.getAbsolutePath());
+            bookService.addFileListItem(serverFile.getName());
 
         }
         catch (FileNotFoundException e){
@@ -139,6 +138,35 @@ public class BookShelfController {
         logger.info("new file saved at: " + serverFile.getAbsolutePath());
         return "redirect:/books/shelf";
 
+    }
+
+
+    @GetMapping("/downloadFile")
+    public void downloadFile(HttpServletRequest request,
+                             HttpServletResponse response,
+                             @RequestParam (name = "fileName") String fileName) {
+
+        logger.info("try download files: " + request + "; FileName: " + fileName);
+        String rootPath = System.getProperty("catalina.home"); // get server path
+
+        String dataDirectory = rootPath + File.separator + "external_uploads" + File.separator;
+        Path file = Paths.get(dataDirectory, fileName);
+        logger.info(dataDirectory);
+        logger.info(file.getFileName());
+
+        if (Files.exists(file))
+        {
+            response.setContentType("APPLICATION/OCTET-STREAM");
+            response.addHeader("Content-Disposition", "attachment; filename="+fileName);
+            try
+            {
+                Files.copy(file, response.getOutputStream());
+                response.getOutputStream().flush();
+            }
+            catch (IOException ex) {
+                ex.printStackTrace();
+            }
+        }
     }
 
 
